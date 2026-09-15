@@ -13,8 +13,8 @@
   <script>
     const video = document.getElementById('video');
     
-    // Sky News UK Working HLS Endpoint
-    const streamUrl = 'https://sky-skynewsuk-1-gb.samsung.wurl.tv/playlist.m3u8';
+    // Official Sky News FAST Stream Endpoint (Open CORS)
+    const streamUrl = 'https://skynews-samsung-uk.amagi.tv/playlist.m3u8';
 
     if (Hls.isSupported()) {
       const hls = new Hls({ enableWorker: true });
@@ -23,7 +23,7 @@
       
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().then(() => {
-          video.muted = false; // Automatically unmutes sound
+          video.muted = false; // Auto-unmutes audio
         }).catch(() => {
           video.muted = true;
           video.play();
