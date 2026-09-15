@@ -12,22 +12,19 @@
   <video id="video" autoplay playsinline muted></video>
   <script>
     const video = document.getElementById('video');
-    const streamUrl = 'https://linear417-gb-hls1-prd-ak.cdn.skycdp.com/100e/Content/HLS_001_1080_30/Live/channel(skynews)/index_1080-30.m3u8';
+    
+    // Sky News UK Working HLS Endpoint
+    const streamUrl = 'https://sky-skynewsuk-1-gb.samsung.wurl.tv/playlist.m3u8';
 
     if (Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true
-      });
+      const hls = new Hls({ enableWorker: true });
       hls.loadSource(streamUrl);
       hls.attachMedia(video);
       
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().then(() => {
-          // Unmute audio after stream successfully starts
-          video.muted = false;
+          video.muted = false; // Automatically unmutes sound
         }).catch(() => {
-          // Fallback if autoplay policy kicks in
           video.muted = true;
           video.play();
         });
@@ -35,17 +32,8 @@
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              hls.recoverMediaError();
-              break;
-            default:
-              hls.destroy();
-              break;
-          }
+          if (data.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+          else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
